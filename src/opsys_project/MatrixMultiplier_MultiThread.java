@@ -3,7 +3,7 @@
  * Student2Name - ID
  */
 
-package opsys_project;
+package src.opsys_project;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

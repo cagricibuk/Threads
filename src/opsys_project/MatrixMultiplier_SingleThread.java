@@ -1,7 +1,7 @@
 /* Cagri CIBUK - 21COMP1066
  * Student2Name - ID
  */
-package opsys_project;
+package src.opsys_project;
 //imports here
 import java.io.BufferedReader;
 import java.io.FileReader;
