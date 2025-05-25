@@ -1,7 +1,8 @@
 /* Cagri CIBUK - 21COMP1066
  * Student2Name - ID
  */
-package src.opsys_project;
+package opsys_project;
+
 //imports here
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -56,29 +57,60 @@ public class MatrixMultiplier_SingleThread {
   public static void loadMatrixA(String filePath) throws IOException {
     // Fill with necessary logic here
     BufferedReader br = new BufferedReader(new FileReader(filePath));
+    // İlk satırı atla (ör: "Matrix A 1000x1000:")
+    br.readLine();
+
     matrixA = new int[MATRIX_SIZE][MATRIX_SIZE];
     for (int i = 0; i < MATRIX_SIZE; i++) {
-      String[] tokens = br.readLine().split(",");
+      String[] tokens = br.readLine().trim().split("\\s+");
+
       for (int j = 0; j < MATRIX_SIZE; j++) {
         matrixA[i][j] = Integer.parseInt(tokens[j]);
       }
     }
+    br.close();
   }
 
   public static void loadMatrixB(String filePath) throws IOException {
-    // Fill with necessary logic here
     BufferedReader br = new BufferedReader(new FileReader(filePath));
-    // Skip first MATRIX_SIZE lines
+
+    // Matrix A başlığını atla
+    br.readLine();
+
+    // Matrix A içeriğini atla
     for (int i = 0; i < MATRIX_SIZE; i++) {
       br.readLine();
     }
+
+    // Matrix B başlığı varsa atla
+    String line = br.readLine();
+    while (line != null && line.trim().isEmpty()) {
+      line = br.readLine(); // boş veya başlıksız satır
+    }
+
     matrixB = new int[MATRIX_SIZE][MATRIX_SIZE];
     for (int i = 0; i < MATRIX_SIZE; i++) {
-      String[] tokens = br.readLine().split(",");
+      line = br.readLine();
+      while (line != null && line.trim().isEmpty()) {
+        line = br.readLine(); // boş satırları atla
+      }
+
+      if (line == null) {
+        throw new IOException("Matrix B verisi eksik. Satır: " + i);
+      }
+
+      String[] tokens = line.trim().split("\\s+");
+      if (tokens.length != MATRIX_SIZE) {
+        throw new IOException(
+            "Matrix B satır uzunluğu hatalı. Beklenen: " + MATRIX_SIZE + ", Gerçek: " + tokens.length);
+      }
+
       for (int j = 0; j < MATRIX_SIZE; j++) {
         matrixB[i][j] = Integer.parseInt(tokens[j]);
       }
     }
+
     br.close();
   }
+
 }

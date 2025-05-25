@@ -1,0 +1,13 @@
+Threads,ExecutionTime(ms),Mode 
+1,2529,Single 
+1,1875,Multi 
+2,1215,Multi 
+4,944,Multi 
+8,1272,Multi 
+10,1324,Multi 
+20,1825,Multi 
+50,2078,Multi 
+100,2145,Multi 
+200,1415,Multi 
+400,1863,Multi 
+500,1932,Multi 

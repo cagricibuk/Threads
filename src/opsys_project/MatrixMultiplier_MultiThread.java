@@ -3,7 +3,7 @@
  * Student2Name - ID
  */
 
-package src.opsys_project;
+package opsys_project;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -76,22 +76,48 @@ public class MatrixMultiplier_MultiThread {
         System.out.println("Time taken (multithreaded): " + duration + " ms");
     }
 
-    public static void loadMatrixB(String filePath) throws IOException {
-        // Fill with necessary logic here
-        BufferedReader br = new BufferedReader(new FileReader(filePath));
-        // Skip Matrix A rows
-        for (int i = 0; i < MATRIX_SIZE; i++) {
-            br.readLine();
-        }
-        matrixB = new int[MATRIX_SIZE][MATRIX_SIZE];
-        for (int i = 0; i < MATRIX_SIZE; i++) {
-            String[] tokens = br.readLine().split(",");
-            for (int j = 0; j < MATRIX_SIZE; j++) {
-                matrixB[i][j] = Integer.parseInt(tokens[j]);
-            }
-        }
-        br.close();
+public static void loadMatrixB(String filePath) throws IOException {
+    BufferedReader br = new BufferedReader(new FileReader(filePath));
+
+    // Matrix A başlığını atla
+    br.readLine();
+
+    // Matrix A içeriğini atla
+    for (int i = 0; i < MATRIX_SIZE; i++) {
+        br.readLine();
     }
+
+    // Matrix B başlığı varsa atla
+    String line = br.readLine();
+    while (line != null && line.trim().isEmpty()) {
+        line = br.readLine();  // başlık boşsa da atla
+    }
+
+    matrixB = new int[MATRIX_SIZE][MATRIX_SIZE];
+    for (int i = 0; i < MATRIX_SIZE; i++) {
+        // Satır oku ve boş satırsa bir sonrakine geç
+        line = br.readLine();
+        while (line != null && line.trim().isEmpty()) {
+            line = br.readLine();
+        }
+
+        if (line == null) {
+            throw new IOException("Unexpected end of file while reading Matrix B at row " + i);
+        }
+
+        String[] tokens = line.trim().split("\\s+");
+        if (tokens.length != MATRIX_SIZE) {
+            throw new IOException("Incorrect number of elements in Matrix B row " + i + ": expected " + MATRIX_SIZE + ", got " + tokens.length);
+        }
+
+        for (int j = 0; j < MATRIX_SIZE; j++) {
+            matrixB[i][j] = Integer.parseInt(tokens[j]);
+        }
+    }
+
+    br.close();
+}
+
 
     // Inner class is required
     static class Worker implements Runnable {
@@ -127,15 +153,18 @@ public class MatrixMultiplier_MultiThread {
         public int[][] readMatrixARows(String filePath, int start, int end) throws IOException {
             // Read rows of matrix A here
             BufferedReader br = new BufferedReader(new FileReader(filePath));
-            int[][] rows = new int[end - start][MATRIX_SIZE];
+            // İlk satır "Matrix A ..." başlığı, atla
+            br.readLine();
 
-            // Skip lines before start
+            // Start satırına kadar atla
             for (int i = 0; i < start; i++) {
                 br.readLine();
             }
 
+            int[][] rows = new int[end - start][MATRIX_SIZE];
             for (int i = 0; i < end - start; i++) {
-                String[] tokens = br.readLine().split(",");
+                String[] tokens = br.readLine().trim().split("\\s+");
+
                 for (int j = 0; j < MATRIX_SIZE; j++) {
                     rows[i][j] = Integer.parseInt(tokens[j]);
                 }
@@ -143,7 +172,6 @@ public class MatrixMultiplier_MultiThread {
 
             br.close();
             return rows;
-
         }
     }
 }
